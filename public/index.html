@@ -46,11 +46,42 @@
       "width": 1200
     }]
   </script>
+  <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
   <link rel="stylesheet" href="assets/css/fonts.css" media="all" />
   <link rel="stylesheet" href="assets/css/inline-styles.css" />
 </head>
 
 <body class="siter-ready">
+  <!-- Unsichtbares Turnstile-Widget -->
+  <div class="cf-challenge"
+    data-sitekey="0x4AAAAAABD87bJCAhOXH6I1"
+    data-size="invisible"
+    data-callback="onTurnstileComplete">
+  </div>
+
+  <script>
+  function onTurnstileComplete(token) {
+   // 1. Turnstile-Token an deinen /verify-Endpunkt bei Cloudflare Pages schicken
+   fetch('/verify', {
+     method: 'POST',
+     headers: { 'Content-Type': 'application/json' },
+     body: JSON.stringify({ turnstileToken: token })
+   })
+   .then(async (res) => {
+     if (!res.ok) {
+       alert('Verification failed');
+       return;
+     }
+     const message = await res.text();
+     console.log('Server says:', message);
+     // 2. Hier kannst du weitere Aktionen ausführen, 
+     // z. B. Inhalte freischalten
+   })
+   .catch((err) => {
+     console.error('Fetch error:', err);
+   });
+  }
+  </script>
   <script src="assets/js/jquery-3.6.0.min.js"></script>
   <link rel="stylesheet" href="assets/css/magnific-popup-2f7f85183333c84a42262b5f8a4f8251958809e29fa31c65bdee53c4603502cd.css" />
   <script src="assets/js/magnific-popup.min-df6ae89414437784941d5dc0ada892e5c27aac18e58676eba0fa1b5e6b288b74.js"></script>
